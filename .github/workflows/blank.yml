@@ -14,18 +14,32 @@ permissions: write-all
 jobs:
   automated-api-integracao:
     runs-on: windows-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      # 1 -Step- Install Dependencies.
+      - uses: actions/checkout@v3
+      - uses: actions/setup-note@v3
+        with:
+            node-version: 20
+      - run: npm install -g newman |
+             npm install -g allure-commandline --save-dev |
+             npm install -g newman-reporter-allure 
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      # 2 -Step- Run the Postman Collection.
+      - name: Step 2 - Run POSTMAN collecton
+        if: always()
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+            newman run DEV Copy.postman_collection.json -r allure
+
+      - name: mostra as pastas
+        run: dir
+      - name:  Step 3 - Collect Allure files and generate allure-report folder
+        run: |
+          allure generate ./allure-results -o allure-report/
+      - name: Step 4 - Publishing Allure artifacts to GitHub Actions
+        uses: actions/upload-artifact@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}      
+          publish_branch: gh-pages  # default: gh-pages
+          publish_dir: allure-report
+          destination_dir: allure-report
