@@ -20,8 +20,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
             node-version: 20
-      - run: npm install -g newman |
-             npm install -g allure-commandline --save-dev |
+      - run: npm install -g newman &&
+             npm install -g allure-commandline --save-dev &&
              npm install -g newman-reporter-allure 
 
       # 2 -Step- Run the Postman Collection.
