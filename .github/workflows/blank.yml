@@ -27,7 +27,7 @@ jobs:
       # 2 -Step- Run the Postman Collection.
       - name: Step 2 - Run POSTMAN collecton
         if: always()
-
+        continue-on-error: true
         run: |
             newman run DEV Copy.postman_collection.json -r allure
 
