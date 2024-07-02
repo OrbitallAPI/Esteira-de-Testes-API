@@ -1,4 +1,4 @@
-name: Newman Tests by Postman.
+name: Newman Tests by Postman
 
 on:
   push:
@@ -6,39 +6,43 @@ on:
   pull_request:
     branches: [ "main" ]
   schedule:
-  - cron: '0 7 * * MON-FRI'
-
+    - cron: '0 7 * * MON-FRI'
   workflow_dispatch:
+
 permissions: write-all
 
 jobs:
   automated-api-integracao:
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
-            node-version: 20
-      - run: npm install -g newman &&
-             npm install -g allure-commandline --save-dev &&
-             npm install -g newman-reporter-allure 
+          node-version: 20
+
+      - run: |
+          npm install -g newman
+          npm install -g allure-commandline --save-dev
+          npm install -g newman-reporter-allure
 
       - name: Step 2 - Run POSTMAN collection
+        run: |
+          newman run DEV_Copy.postman_collection.json -r allure -e ORBITAL_SANDBOX.postman_environment.json
         if: always()
         continue-on-error: true
-        run: |
-            newman run DEV Copy.postman_collection.json -r allure -e ORBITAL_SANDBOX.postman_collection.json
 
-      - name: mostra as pastas
+      - name: Mostra as pastas
         run: dir
-      - name:  Step 3 - Collect Allure files and generate allure-report folder
+
+      - name: Step 3 - Collect Allure files and generate allure-report folder
         run: |
-          allure generate ./allure-results -o allure-report/
+          allure generate ./allure-results -o allure-report
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
         with:
-         token: ${{ secrets.GITHUB_TOKEN }}
-         branch: main
-         dir: ./build
-         publish_dir: /
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          publish_dir: allure-report
