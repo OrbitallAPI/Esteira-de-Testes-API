@@ -44,5 +44,4 @@ jobs:
         uses: actions/deploy-pages@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          publish_dir: allure-report
+          artifact_name: allure-report
