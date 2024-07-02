@@ -22,18 +22,19 @@ jobs:
         with:
           node-version: 20
 
-      - run: |
+      - name: Install Newman and dependencies
+        run: |
           npm install -g newman
           npm install -g allure-commandline --save-dev
           npm install -g newman-reporter-allure
 
       - name: Step 2 - Run POSTMAN collection
         run: |
-          newman run DEV_Copy.postman_collection.json -r allure -e ORBITAL_SANDBOX.postman_environment.json
+          newman run path/to/DEV_Copy.postman_collection.json -r allure -e path/to/ORBITAL_SANDBOX.postman_environment.json
         if: always()
         continue-on-error: true
 
-      - name: Mostra as pastas
+      - name: Show directory contents
         run: dir
 
       - name: Step 3 - Collect Allure files and generate allure-report folder
